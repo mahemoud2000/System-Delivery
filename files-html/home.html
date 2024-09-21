@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home Page</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        table, th, td {
+            border: 1px solid black;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <h1>Welcome, <span id="userName"></span></h1>
+    
+    <button onclick="toggleAddOrder()">Add Order</button>
+    <div id="addOrderDiv" class="hidden">
+        <h2>Add Order</h2>
+        <form id="orderForm" onsubmit="addOrder(event)">
+            <label for="customerName">Customer Name:</label>
+            <input type="text" id="customerName" required>
+            <br>
+            <label for="customerNumber">Customer Number:</label>
+            <input type="text" id="customerNumber" required>
+            <br>
+            <label for="customerAddress">Customer Address:</label>
+            <input type="text" id="customerAddress" required>
+            <br>
+            <button type="submit">Submit Order</button>
+        </form>
+    </div>
+
+    <button onclick="toggleAllOrders()">All Orders (<span id="orderCount">0</span>)</button>
+    <div id="allOrdersDiv" class="hidden">
+        <h2>All Orders</h2>
+        <table id="ordersTable">
+            <thead>
+                <tr>
+                    <th>Order ID</th>
+                    <th>Customer Name</th>
+                    <th>Customer Number</th>
+                    <th>Customer Address</th>
+                    <th>Date & Time</th>
+                </tr>
+            </thead>
+            <tbody id="ordersTableBody">
+                <!-- Orders will be populated here -->
+            </tbody>
+        </table>
+    </div>
+
+    <button onclick="toggleAddDeliveryPerson()">Add Delivery Person</button>
+    <div id="addDeliveryPersonDiv" class="hidden">
+        <h2>Add Delivery Person</h2>
+        <form id="deliveryForm" onsubmit="addDeliveryPerson(event)">
+            <label for="deliveryName">Delivery Person Name:</label>
+            <input type="text" id="deliveryName" required>
+            <br>
+            <label for="deliveryNumber">Delivery Person Number:</label>
+            <input type="text" id="deliveryNumber" required>
+            <br>
+            <label for="deliveryNote">Note:</label>
+            <input type="text" id="deliveryNote">
+            <br>
+            <button type="submit">Submit Delivery Person</button>
+        </form>
+    </div>
+
+    <button onclick="toggleAllDeliveryPersons()">All Delivery Persons (<span id="deliveryCount">0</span>)</button>
+    <div id="allDeliveryPersonsDiv" class="hidden">
+        <h2>All Delivery Persons</h2>
+        <table id="deliveryPersonsTable">
+            <thead>
+                <tr>
+                    <th>Delivery ID</th>
+                    <th>Delivery Person Name</th>
+                    <th>Delivery Person Number</th>
+                    <th>Note</th>
+                    <th>Date & Time</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="deliveryPersonsTableBody">
+                <!-- Delivery persons will be populated here -->
+            </tbody>
+        </table>
+    </div>
+
+    <a href="login.html">Exit</a>
+    
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+
+    <script>
+        // Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyBzWStPRbvQ4f6Wp13iCw70N60IfZIBcGw",
+            authDomain: "web-cv-pro.firebaseapp.com",
+            projectId: "web-cv-pro",
+            storageBucket: "web-cv-pro.appspot.com",
+            messagingSenderId: "282734467735",
+            appId: "1:282734467735:web:ad0f4f4c160999198327d2"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+
+        const userEmail = localStorage.getItem('userEmail');
+        document.getElementById('userName').innerText = userEmail || 'Guest';
+
+        const ordersRef = database.ref(`orders/${userEmail.replace('.', '_')}`);
+        const deliveryPersonsRef = database.ref('deliveryPersons');
+        let lastOrderId = 0;
+        let lastDeliveryId = 0;
+
+        // Function to toggle Add Order section
+        function toggleAddOrder() {
+            const div = document.getElementById('addOrderDiv');
+            div.classList.toggle('hidden');
+        }
+
+        // Function to toggle All Orders section
+        function toggleAllOrders() {
+            const div = document.getElementById('allOrdersDiv');
+            div.classList.toggle('hidden');
+            loadOrders();
+        }
+
+        // Function to toggle Add Delivery Person section
+        function toggleAddDeliveryPerson() {
+            const div = document.getElementById('addDeliveryPersonDiv');
+            div.classList.toggle('hidden');
+        }
+
+        // Function to toggle All Delivery Persons section
+        function toggleAllDeliveryPersons() {
+            const div = document.getElementById('allDeliveryPersonsDiv');
+            div.classList.toggle('hidden');
+            loadDeliveryPersons();
+        }
+
+        // Function to add an order
+        function addOrder(event) {
+            event.preventDefault();
+            const customerName = document.getElementById('customerName').value;
+            const customerNumber = document.getElementById('customerNumber').value;
+            const customerAddress = document.getElementById('customerAddress').value;
+
+            if (lastOrderId < 1000) {
+                lastOrderId++;
+            } else {
+                alert('Maximum order limit reached.');
+                return;
+            }
+
+            const orderData = {
+                id: lastOrderId,
+                name: customerName,
+                number: customerNumber,
+                address: customerAddress,
+                timestamp: new Date().toLocaleString()
+            };
+
+            ordersRef.child(lastOrderId).set(orderData).then(() => {
+                alert('Order added successfully!');
+                document.getElementById('orderForm').reset();
+                loadOrders();
+            }).catch(error => {
+                console.error('Error adding order:', error);
+            });
+        }
+
+        // Load user's orders from Firebase
+        function loadOrders() {
+            ordersRef.on('value', snapshot => {
+                const ordersTableBody = document.getElementById('ordersTableBody');
+                ordersTableBody.innerHTML = ''; 
+                const orders = snapshot.val();
+                let orderCount = 0;
+
+                if (orders) {
+                    orderCount = Object.keys(orders).length;
+                    for (let id in orders) {
+                        const order = orders[id];
+                        const row = `<tr>
+                                        <td>${order.id}</td>
+                                        <td>${order.name}</td>
+                                        <td>${order.number}</td>
+                                        <td>${order.address}</td>
+                                        <td>${order.timestamp}</td>
+                                     </tr>`;
+                        ordersTableBody.innerHTML += row;
+                    }
+                }
+                document.getElementById('orderCount').innerText = orderCount;
+            });
+        }
+
+        // Function to add a delivery person
+        function addDeliveryPerson(event) {
+            event.preventDefault();
+            const deliveryName = document.getElementById('deliveryName').value;
+            const deliveryNumber = document.getElementById('deliveryNumber').value;
+            const deliveryNote = document.getElementById('deliveryNote').value;
+
+            if (lastDeliveryId < 1000) {
+                lastDeliveryId++;
+            } else {
+                alert('Maximum delivery person limit reached.');
+                return;
+            }
+
+            const deliveryData = {
+                id: lastDeliveryId,
+                name: deliveryName,
+                number: deliveryNumber,
+                note: deliveryNote,
+                timestamp: new Date().toLocaleString()
+            };
+
+            deliveryPersonsRef.child(lastDeliveryId).set(deliveryData).then(() => {
+                alert('Delivery person added successfully!');
+                document.getElementById('deliveryForm').reset();
+                loadDeliveryPersons();
+            }).catch(error => {
+                console.error('Error adding delivery person:', error);
+            });
+        }
+
+        // Load delivery persons from Firebase
+        function loadDeliveryPersons() {
+            deliveryPersonsRef.on('value', snapshot => {
+                const deliveryPersonsTableBody = document.getElementById('deliveryPersonsTableBody');
+                deliveryPersonsTableBody.innerHTML = ''; 
+                const deliveryPersons = snapshot.val();
+                let deliveryCount = 0;
+
+                if (deliveryPersons) {
+                    deliveryCount = Object.keys(deliveryPersons).length;
+                    for (let id in deliveryPersons) {
+                        const person = deliveryPersons[id];
+                        const row = `<tr>
+                                        <td>${person.id}</td>
+                                        <td>${person.name}</td>
+                                        <td>${person.number}</td>
+                                       
+                                        <td>${person.note}</td>
+                                        <td>${person.timestamp}</td>
+                                        <td>
+                                            <button onclick="editDeliveryPerson(${person.id})">Edit</button>
+                                            <button onclick="deleteDeliveryPerson(${person.id})">Delete</button>
+                                        </td>
+                                     </tr>`;
+                        deliveryPersonsTableBody.innerHTML += row;
+                    }
+                }
+                document.getElementById('deliveryCount').innerText = deliveryCount;
+            });
+        }
+
+        // Function to edit a delivery person
+        function editDeliveryPerson(id) {
+            const deliveryName = prompt("Enter new Delivery Person Name:");
+            const deliveryNumber = prompt("Enter new Delivery Person Number:");
+            const deliveryNote = prompt("Enter new Note:");
+
+            const updatedData = {
+                id: id,
+                name: deliveryName,
+                number: deliveryNumber,
+                note: deliveryNote,
+                timestamp: new Date().toLocaleString()
+            };
+
+            deliveryPersonsRef.child(id).set(updatedData).then(() => {
+                alert('Delivery person updated successfully!');
+                loadDeliveryPersons();
+            }).catch(error => {
+                console.error('Error updating delivery person:', error);
+            });
+        }
+
+        // Function to delete a delivery person
+        function deleteDeliveryPerson(id) {
+            if (confirm("Are you sure you want to delete this delivery person?")) {
+                deliveryPersonsRef.child(id).remove().then(() => {
+                    alert('Delivery person deleted successfully!');
+                    loadDeliveryPersons();
+                }).catch(error => {
+                    console.error('Error deleting delivery person:', error);
+                });
+            }
+        }
+    </script>
+</body>
+</html>

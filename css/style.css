@@ -1,0 +1,24 @@
+body {
+    font-family: Arial, sans-serif; /* نوع الخط */
+    margin: 20px; /* هامش الصفحة */
+}
+
+h1 {
+    color: #333; /* لون العنوان */
+}
+
+form {
+    margin-bottom: 20px; /* هامش أسفل النموذج */
+}
+
+input {
+    margin: 5px; /* هامش بين الحقول */
+    padding: 10px; /* padding للحقل */
+    width: 200px; /* عرض الحقل */
+}
+
+button {
+    padding: 10px; /* padding للزر */
+    margin: 5px; /* هامش بين الأزرار */
+    cursor: pointer; /* شكل المؤشر */
+}
