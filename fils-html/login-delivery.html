@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تسجيل دخول مندوب</title>
+
+    <!-- إضافة Firebase CDN -->
+    <script src="https://www.gstatic.com/firebasejs/9.1.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.1.2/firebase-database-compat.js"></script>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f2f2f2;
+        }
+
+        .login-container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            position: relative;
+        }
+
+        input {
+            display: block;
+            width: 100%;
+            margin-bottom: 10px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        button {
+            padding: 10px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #218838;
+        }
+
+        .error-message {
+            color: red;
+        }
+
+        /* Loader styles */
+        .loader {
+            display: none;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            border: 8px solid #f3f3f3; /* Light gray */
+            border-top: 8px solid #3498db; /* Blue */
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="login-container">
+        <h2>تسجيل دخول مندوب</h2>
+        <input type="text" id="deliveryId" placeholder="ID" required>
+        <input type="password" id="password" placeholder="كلمة المرور" required>
+        <button onclick="loginDeliveryPerson()">تسجيل الدخول</button>
+        <p class="error-message" id="error-message"></p>
+        <div class="loader" id="loader"></div>
+    </div>
+
+    <script>
+        // تكوين Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyBon5IxjZIlqe3P44MTKXu6xTqX5kdKnCA",
+            authDomain: "add-owner.firebaseapp.com",
+            databaseURL: "https://add-owner-default-rtdb.firebaseio.com", // تأكد من أنك قمت بوضع رابط قاعدة البيانات الصحيح
+            projectId: "add-owner",
+            storageBucket: "add-owner.appspot.com",
+            messagingSenderId: "367416374034",
+            appId: "1:367416374034:web:e5b5cd9b190083c2adb9cb"
+        };
+
+        // تهيئة Firebase
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+
+        // Function to login delivery person
+        function loginDeliveryPerson() {
+            const deliveryId = document.getElementById('deliveryId').value;
+            const password = document.getElementById('password').value;
+
+            // Clear previous error messages
+            document.getElementById('error-message').textContent = '';
+
+            // Check if both fields are filled
+            if (!deliveryId || !password) {
+                document.getElementById('error-message').textContent = 'من فضلك، املأ جميع الحقول.';
+                return;
+            }
+
+            // Show loader
+            document.getElementById('loader').style.display = 'block';
+
+            // Check Delivery Person credentials from Firebase Database
+            firebase.database().ref('Delivery Person/' + deliveryId).once('value')
+                .then((snapshot) => {
+                    const deliveryData = snapshot.val();
+
+                    // Hide loader
+                    document.getElementById('loader').style.display = 'none';
+
+                    if (deliveryData && deliveryData.password === password) {
+                        // Redirect to Home Delivery page if credentials are correct
+                        window.location.href = "home-delivery.html";
+                    } else {
+                        // Show error message if credentials are incorrect
+                        document.getElementById('error-message').textContent = 'خطأ في البيانات المدخلة. يرجى التحقق من الـ ID وكلمة المرور.';
+                    }
+                })
+                .catch((error) => {
+                    // Hide loader
+                    document.getElementById('loader').style.display = 'none';
+                    console.error("Error fetching data: ", error);
+                    document.getElementById('error-message').textContent = 'حدث خطأ أثناء التحقق. يرجى المحاولة مرة أخرى.';
+                });
+        }
+    </script>
+
+    <script>
+        // Function to check internet connection status
+        function checkInternetConnection() {
+            if (navigator.onLine) {
+                console.log("Connected to the internet.");
+                document.getElementById("network-status").style.display = "none"; // Hide message
+            } else {
+                console.log("No internet connection.");
+                document.getElementById("network-status").style.display = "block"; // Show message
+            }
+        }
+
+        // Event listeners for detecting online and offline status
+        window.addEventListener('online', checkInternetConnection);
+        window.addEventListener('offline', checkInternetConnection);
+
+        // Check connection status when page loads
+        window.onload = function() {
+            checkInternetConnection();
+        }
+    </script>
+
+    <!-- Add a div to display the network status message -->
+    <div id="network-status" style="display: none; position: fixed; top: 0; width: 100%; background-color: red; color: white; text-align: center; padding: 10px;">
+        No internet connection. Please check your network.
+    </div>
+
+</body>
+</html>
