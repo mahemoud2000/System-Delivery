@@ -105,15 +105,21 @@
         h2 {
             margin-top: 40px;
         }
+        .text-center {
+            background-color: #aaa;
+            padding: 10px;
+            width: 100%;
+            
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1 class="text-center">Firebase Realtime Database Dashboard</h1>
+        <h1 class="text-center">قاعده البيانات</h1>
 
         <h2>
-            Owner
-            <button class="btn btn-primary" onclick="fetchData('owner', 'output-owner', 'btn-owner')">Load Data</button>
+            المالك
+            <button class="btn btn-primary" onclick="fetchData('owner', 'output-owner', 'btn-owner')"> عرض</button>
         </h2>
         <table class="table table-striped table-bordered">
             <thead class="table-dark">
@@ -131,8 +137,8 @@
         </table>
 
         <h2>
-            Admins
-            <button class="btn btn-primary" onclick="fetchData('admins', 'output-admins', 'btn-admins')">Load Data</button>
+            المشرفون
+            <button class="btn btn-primary" onclick="fetchData('admins', 'output-admins', 'btn-admins')">عرض</button>
         </h2>
         <table class="table table-striped table-bordered">
             <thead class="table-dark">
@@ -150,8 +156,8 @@
         </table>
 
         <h2>
-            Restaurant Accounts
-            <button class="btn btn-primary" onclick="fetchData('restaurant accounts', 'output-restaurant-accounts', 'btn-restaurant-accounts')">Load Data</button>
+             المطاعم
+            <button class="btn btn-primary" onclick="fetchData('restaurant accounts', 'output-restaurant-accounts', 'btn-restaurant-accounts')"> عرض</button>
         </h2>
         <table class="table table-striped table-bordered">
             <thead class="table-dark">
@@ -169,8 +175,8 @@
         </table>
 
         <h2>
-            Delivery Person
-            <button class="btn btn-primary" onclick="fetchData('Delivery Person', 'output-delivery-person', 'btn-delivery-person')">Load Data</button>
+             الطيارين
+            <button class="btn btn-primary" onclick="fetchData('Delivery Person', 'output-delivery-person', 'btn-delivery-person')"> عرض</button>
         </h2>
         <table class="table table-striped table-bordered">
             <thead class="table-dark">

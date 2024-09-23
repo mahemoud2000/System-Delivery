@@ -8,7 +8,7 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Arial', sans-serif;
             background-color: #f4f4f4;
             margin: 0;
             padding: 20px;
@@ -18,8 +18,9 @@
             margin: 0 auto;
             padding: 20px;
             background: #fff;
-            border-radius: 5px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
         }
         .form-group {
             margin-bottom: 15px;
@@ -27,11 +28,19 @@
         label {
             display: block;
             margin-bottom: 5px;
+            font-weight: bold;
         }
         input {
             width: 100%;
-            padding: 8px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
             box-sizing: border-box;
+            transition: border-color 0.3s;
+        }
+        input:focus {
+            border-color: #007bff;
+            outline: none;
         }
         button {
             padding: 10px 15px;
@@ -41,18 +50,46 @@
             border-radius: 5px;
             cursor: pointer;
             margin-top: 10px;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #218838;
         }
         .message {
             margin-top: 10px;
             color: green;
+            font-weight: bold;
         }
         .error {
             margin-top: 10px;
             color: red;
+            font-weight: bold;
         }
         h2 {
             cursor: pointer;
             color: #007bff;
+            transition: color 0.3s;
+        }
+        h2:hover {
+            color: #0056b3;
+        }
+        .loader {
+            display: none;
+            margin: 10px 0;
+        }
+        .loader.active {
+            display: block;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3498db;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
     </style>
 </head>
@@ -78,12 +115,13 @@
                     <input type="password" id="password" required>
                 </div>
                 <button type="submit">إضافة مطعم</button>
+                <div class="loader" id="restaurantLoader"></div>
             </form>
             <div id="restaurantMessage" class="message"></div>
             <div id="restaurantError" class="error"></div>
         </div>
 
-        <h2 onclick="toggleSection('adminSection')">إضافة أدمين</h2>
+        <h2 onclick="toggleSection('adminSection')">إضافة مشرف</h2>
         <div id="adminSection" style="display: none;">
             <form id="adminForm">
                 <div class="form-group">
@@ -99,6 +137,7 @@
                     <input type="tel" id="adminPhone" required>
                 </div>
                 <button type="submit">إضافة أدمين</button>
+                <div class="loader" id="adminLoader"></div>
             </form>
             <div id="adminMessage" class="message"></div>
             <div id="adminError" class="error"></div>
@@ -120,10 +159,12 @@
                     <input type="tel" id="deliveryPhone" required>
                 </div>
                 <button type="submit">إضافة مندوب</button>
+                <div class="loader" id="deliveryLoader"></div>
             </form>
             <div id="deliveryMessage" class="message"></div>
             <div id="deliveryError" class="error"></div>
         </div>
+        <h2><a href="database.html" target="_blank" class="database">قاعده البيانات</a></h2>
     </div>
 
     <script>
@@ -131,7 +172,7 @@
             apiKey: "AIzaSyBon5IxjZIlqe3P44MTKXu6xTqX5kdKnCA",
             authDomain: "add-owner.firebaseapp.com",
             projectId: "add-owner",
-            storageBucket: "add-owner.appspot.com",
+            storageBucket: "add-owner",
             messagingSenderId: "367416374034",
             appId: "1:367416374034:web:e5b5cd9b190083c2adb9cb"
         };
@@ -148,11 +189,14 @@
 
         document.getElementById("restaurantForm").addEventListener("submit", function (event) {
             event.preventDefault();
+            const loader = document.getElementById("restaurantLoader");
+            loader.classList.add("active");
             const ownerName = document.getElementById("ownerName").value;
 
             restaurantsRef.orderByChild('name').equalTo(ownerName).once('value').then(snapshot => {
                 if (snapshot.exists()) {
                     document.getElementById("restaurantError").textContent = "الاسم موجود بالفعل! أدخل مطعم آخر.";
+                    loader.classList.remove("active");
                 } else {
                     addRestaurant(ownerName);
                 }
@@ -177,19 +221,24 @@
                 document.getElementById("restaurantError").textContent = ""; 
                 document.getElementById("restaurantForm").reset();
                 currentRestaurantId++;
+                document.getElementById("restaurantLoader").classList.remove("active");
             }).catch((error) => {
                 console.error("خطأ في إضافة المطعم: ", error);
                 document.getElementById("restaurantError").textContent = "حدث خطأ: " + error.message;
+                document.getElementById("restaurantLoader").classList.remove("active");
             });
         }
 
         document.getElementById("adminForm").addEventListener("submit", function (event) {
             event.preventDefault();
+            const loader = document.getElementById("adminLoader");
+            loader.classList.add("active");
             const adminName = document.getElementById("adminName").value;
 
             adminsRef.orderByChild('name').equalTo(adminName).once('value').then(snapshot => {
                 if (snapshot.exists()) {
                     document.getElementById("adminError").textContent = "الاسم موجود بالفعل! أدخل أدمين آخر.";
+                    loader.classList.remove("active");
                 } else {
                     addAdmin(adminName);
                 }
@@ -212,19 +261,24 @@
                 document.getElementById("adminError").textContent = ""; 
                 document.getElementById("adminForm").reset();
                 currentAdminId++;
+                document.getElementById("adminLoader").classList.remove("active");
             }).catch((error) => {
                 console.error("خطأ في إضافة الأدمين: ", error);
                 document.getElementById("adminError").textContent = "حدث خطأ: " + error.message;
+                document.getElementById("adminLoader").classList.remove("active");
             });
         }
 
         document.getElementById("deliveryPersonForm").addEventListener("submit", function (event) {
             event.preventDefault();
+            const loader = document.getElementById("deliveryLoader");
+            loader.classList.add("active");
             const deliveryName = document.getElementById("deliveryName").value;
 
             deliveryPersonsRef.orderByChild('name').equalTo(deliveryName).once('value').then(snapshot => {
                 if (snapshot.exists()) {
                     document.getElementById("deliveryError").textContent = "الاسم موجود بالفعل! أدخل مندوب آخر.";
+                    loader.classList.remove("active");
                 } else {
                     addDeliveryPerson(deliveryName);
                 }
@@ -247,9 +301,11 @@
                 document.getElementById("deliveryError").textContent = ""; 
                 document.getElementById("deliveryPersonForm").reset();
                 currentDeliveryId++;
+                document.getElementById("deliveryLoader").classList.remove("active");
             }).catch((error) => {
                 console.error("خطأ في إضافة المندوب: ", error);
                 document.getElementById("deliveryError").textContent = "حدث خطأ: " + error.message;
+                document.getElementById("deliveryLoader").classList.remove("active");
             });
         }
 
