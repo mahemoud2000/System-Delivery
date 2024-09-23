@@ -7,21 +7,74 @@
     <!-- Load Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            padding: 50px;
+        }
+        .main-add-admin {
+            max-width: 400px;
+            margin: auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: relative; /* Position relative for loader */
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .loader {
+            display: none;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            border: 8px solid #f3f3f3; /* Light gray */
+            border-top: 8px solid #3498db; /* Blue */
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
 </head>
 <body>
-   <div class="main-add-admin">
-    <form onsubmit="registerAdmin(event)">
-        <h2>Add Owner</h2>
-        <label for="ownerName">الاسم:</label>
-        <input type="text" id="ownerName" required>
-        <br><br>
-        <label for="ownerPassword">كلمة المرور:</label>
-        <input type="password" id="ownerPassword" required>
-        <br><hr>
-        <button type="submit">تسجيل</button>
-    </form>
-   </div>
-    <a href="fils-html/login-adimn.html">Login</a>
+
+    <div class="main-add-admin">
+        <form onsubmit="registerAdmin(event)">
+            <h2>Add Owner</h2>
+            <label for="ownerName">الاسم:</label>
+            <input type="text" id="ownerName" required>
+            <label for="ownerPassword">كلمة المرور:</label>
+            <input type="password" id="ownerPassword" required>
+            <button type="submit">Add</button>
+            <div class="loader" id="loader"></div> <!-- Loader -->
+        </form>
+    </div>
+    <a href="login-owner.html" target="_blank">Login</a>
+
     <script>
         // Firebase Configuration
         const firebaseConfig = {
@@ -43,6 +96,10 @@
             event.preventDefault(); // Prevent default form submission
             const ownerName = document.getElementById('ownerName').value;
             const ownerPassword = document.getElementById('ownerPassword').value;
+            const loader = document.getElementById('loader');
+
+            // Show loader
+            loader.style.display = 'block';
 
             // Generate a unique ID for the admin (optional)
             const adminId = ownerName.replace(/\s+/g, '_') + '_' + Date.now();
@@ -53,10 +110,12 @@
                 password: ownerPassword
             }).then(() => {
                 alert('تم تسجيل الأدمين بنجاح!');
+                loader.style.display = 'none'; // Hide loader
                 window.location.href = "#"; // Redirect to Add User page
             }).catch(error => {
                 console.error('Error registering admin:', error);
                 alert('Error: ' + error.message);
+                loader.style.display = 'none'; // Hide loader on error
             });
         }
     </script>
