@@ -58,23 +58,37 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+        footer {
+            text-align: center;
+            /* margin-top: 30px; */
+            padding: 10px;
+            background-color: #007bff;
+            color: white;
+            border-radius: 5px;
+            position: absolute;
+            bottom: 0;
+            width: 90%;
+        }
     </style>
 </head>
 <body>
 
     <div class="main-add-admin">
         <form onsubmit="registerAdmin(event)">
-            <h2>Add Owner</h2>
+            <h2> اضافه مالك</h2>
             <label for="ownerName">الاسم:</label>
             <input type="text" id="ownerName" required>
             <label for="ownerPassword">كلمة المرور:</label>
             <input type="password" id="ownerPassword" required>
             <button type="submit">Add</button>
-            <a href="login-owner.html" target="_blank">Or Login</a>
+            <a href="login-owner.html" target="_blank">سجل دخول مالك </a>
             <div class="loader" id="loader"></div> <!-- Loader -->
         </form>
     </div>
-
+    <footer>
+        <p>&copy; 2024 Made By: Mahmoud Hamed</p>
+        <p>Phone: 01144897324</p>
+    </footer>
     <script>
         // Firebase Configuration
         const firebaseConfig = {

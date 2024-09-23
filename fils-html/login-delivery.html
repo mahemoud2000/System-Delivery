@@ -17,32 +17,43 @@
             align-items: center;
             height: 100vh;
             background-color: #f2f2f2;
+            margin: 0;
         }
 
         .login-container {
             background-color: white;
-            padding: 20px;
-            border-radius: 5px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
             position: relative;
+            width: 100%;
+            text-align: center;
+        }
+
+        h2 {
+            margin-bottom: 20px;
+            color: #333;
         }
 
         input {
             display: block;
             width: 100%;
-            margin-bottom: 10px;
-            padding: 10px;
+            margin-bottom: 15px;
+            padding: 12px;
             border: 1px solid #ccc;
             border-radius: 5px;
+            font-size: 14px;
         }
 
         button {
-            padding: 10px;
-            background-color: #28a745;
+            padding: 12px;
+            background-color: #007bff;
             color: white;
             border: none;
             border-radius: 5px;
             cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
         }
 
         button:hover {
@@ -51,6 +62,7 @@
 
         .error-message {
             color: red;
+            margin-top: 10px;
         }
 
         /* Loader styles */
@@ -72,6 +84,29 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+
+        footer {
+            text-align: center;
+            padding: 10px;
+            background-color: #007bff;
+            color: white;
+            border-radius: 5px;
+            position: absolute;
+            bottom: 10px;
+            width: calc(100% - 20px);
+        }
+
+        /* Network status styles */
+        #network-status {
+            display: none;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background-color: red;
+            color: white;
+            text-align: center;
+            padding: 10px;
+        }
     </style>
 </head>
 <body>
@@ -80,17 +115,22 @@
         <h2>تسجيل دخول مندوب</h2>
         <input type="text" id="deliveryId" placeholder="ID" required>
         <input type="password" id="password" placeholder="كلمة المرور" required>
-        <button onclick="loginDeliveryPerson()">تسجيل الدخول</button>
+        <button onclick="loginDeliveryPerson()" class="btn">تسجيل الدخول</button>
         <p class="error-message" id="error-message"></p>
         <div class="loader" id="loader"></div>
     </div>
+
+    <footer>
+        <p>&copy; 2024 Made By: Mahmoud Hamed</p>
+        <p>Phone: 01144897324</p>
+    </footer>
 
     <script>
         // تكوين Firebase
         const firebaseConfig = {
             apiKey: "AIzaSyBon5IxjZIlqe3P44MTKXu6xTqX5kdKnCA",
             authDomain: "add-owner.firebaseapp.com",
-            databaseURL: "https://add-owner-default-rtdb.firebaseio.com", // تأكد من أنك قمت بوضع رابط قاعدة البيانات الصحيح
+            databaseURL: "https://add-owner-default-rtdb.firebaseio.com",
             projectId: "add-owner",
             storageBucket: "add-owner.appspot.com",
             messagingSenderId: "367416374034",
@@ -141,16 +181,12 @@
                     document.getElementById('error-message').textContent = 'حدث خطأ أثناء التحقق. يرجى المحاولة مرة أخرى.';
                 });
         }
-    </script>
 
-    <script>
         // Function to check internet connection status
         function checkInternetConnection() {
             if (navigator.onLine) {
-                console.log("Connected to the internet.");
                 document.getElementById("network-status").style.display = "none"; // Hide message
             } else {
-                console.log("No internet connection.");
                 document.getElementById("network-status").style.display = "block"; // Show message
             }
         }
@@ -166,9 +202,7 @@
     </script>
 
     <!-- Add a div to display the network status message -->
-    <div id="network-status" style="display: none; position: fixed; top: 0; width: 100%; background-color: red; color: white; text-align: center; padding: 10px;">
-        No internet connection. Please check your network.
-    </div>
+    <div id="network-status">لا يوجد اتصال بالإنترنت. يرجى التحقق من الشبكة.</div>
 
 </body>
 </html>

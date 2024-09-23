@@ -10,109 +10,159 @@
         body {
             font-family: 'Arial', sans-serif;
             background-color: #f4f4f4;
+            color: #333;
             margin: 0;
             padding: 20px;
         }
+
         .container {
-            max-width: 600px;
-            margin: 0 auto;
+            max-width: 800px;
+            margin: auto;
+            background: white;
             padding: 20px;
-            background: #fff;
-            border-radius: 8px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-            transition: all 0.3s ease;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
         }
+
+        h2 {
+            cursor: pointer;
+            background: #007BFF;
+            color: white;
+            padding: 15px;
+            border-radius: 5px;
+            transition: background 0.3s;
+            margin: 10px 0;
+        }
+
+        h2:hover {
+            background: #0056b3;
+        }
+
         .form-group {
-            margin-bottom: 15px;
+            margin: 15px 0;
         }
+
         label {
             display: block;
             margin-bottom: 5px;
             font-weight: bold;
         }
-        input {
+
+        input[type="text"],
+        input[type="password"] {
             width: 100%;
             padding: 10px;
             border: 1px solid #ccc;
-            border-radius: 4px;
-            box-sizing: border-box;
+            border-radius: 5px;
             transition: border-color 0.3s;
         }
-        input:focus {
-            border-color: #007bff;
+
+        input[type="text"]:focus,
+        input[type="password"]:focus {
+            border-color: #007BFF;
             outline: none;
         }
+
         button {
-            padding: 10px 15px;
-            background-color: #28a745;
+            background: #28a745;
             color: white;
             border: none;
+            padding: 10px 15px;
             border-radius: 5px;
             cursor: pointer;
-            margin-top: 10px;
-            transition: background-color 0.3s;
+            transition: background 0.3s;
         }
+
         button:hover {
-            background-color: #218838;
+            background: #218838;
         }
-        .message {
-            margin-top: 10px;
-            color: green;
-            font-weight: bold;
-        }
-        .error {
-            margin-top: 10px;
-            color: red;
-            font-weight: bold;
-        }
-        h2 {
-            cursor: pointer;
-            color: #007bff;
-            transition: color 0.3s;
-        }
-        h2:hover {
-            color: #0056b3;
-        }
+
         .loader {
             display: none;
-            margin: 10px 0;
+            margin-top: 10px;
+            color: #007BFF;
         }
+
         .loader.active {
-            display: block;
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid #3498db;
-            border-radius: 50%;
-            width: 30px;
-            height: 30px;
-            animation: spin 1s linear infinite;
-            margin: auto;
+            display: inline;
         }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+
+        .message {
+            color: #28a745;
+            margin-top: 10px;
+        }
+
+        .error {
+            color: #dc3545;
+            margin-top: 10px;
+        }
+
+        .instructions {
+            display: none;
+            background: #e9ecef;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 20px;
+            border-left: 5px solid #007BFF;
+        }
+
+        .instructions h3 {
+            margin-top: 0;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h2 onclick="toggleSection('restaurantSection')">إضافة مطعم</h2>
-        <div id="restaurantSection" style="display: none;">
-            <form id="restaurantForm">
+        <h2 onclick="toggleSection('ownerSection')">إضافة مالك</h2>
+        <div id="ownerSection" style="display: none;">
+            <form id="ownerForm">
                 <div class="form-group">
                     <label for="ownerName">الاسم:</label>
                     <input type="text" id="ownerName" required>
                 </div>
                 <div class="form-group">
-                    <label for="email">البريد الإلكتروني:</label>
-                    <input type="email" id="email" required>
+                    <label for="ownerPassword">كلمة المرور:</label>
+                    <input type="password" id="ownerPassword" required>
+                </div>
+                <button type="submit">إضافة مالك</button>
+                <div class="loader" id="ownerLoader"></div>
+            </form>
+            <div id="ownerMessage" class="message"></div>
+            <div id="ownerError" class="error"></div>
+        </div>
+
+        <h2 onclick="toggleSection('adminSection')">إضافة مشرف</h2>
+        <div id="adminSection" style="display: none;">
+            <form id="adminForm">
+                <div class="form-group">
+                    <label for="adminName">اسم المشرف:</label>
+                    <input type="text" id="adminName" required>
                 </div>
                 <div class="form-group">
-                    <label for="phone">رقم التليفون:</label>
-                    <input type="tel" id="phone" required>
+                    <label for="adminPassword">كلمة المرور:</label>
+                    <input type="password" id="adminPassword" required>
+                </div>
+                <button type="submit">إضافة مشرف</button>
+                <div class="loader" id="adminLoader"></div>
+            </form>
+            <div id="adminMessage" class="message"></div>
+            <div id="adminError" class="error"></div>
+        </div>
+
+        <h2 onclick="toggleSection('restaurantSection')">إضافة مطعم</h2>
+        <div id="restaurantSection" style="display: none;">
+            <form id="restaurantForm">
+                <div class="form-group">
+                    <label for="restaurantName">اسم المطعم:</label>
+                    <input type="text" id="restaurantName" required>
                 </div>
                 <div class="form-group">
-                    <label for="password">كلمة المرور:</label>
-                    <input type="password" id="password" required>
+                    <label for="restaurantPassword">كلمة المرور:</label>
+                    <input type="password" id="restaurantPassword" required>
+                </div>
+                <div class="form-group">
+                    <label for="restaurantPhone">رقم الهاتف:</label>
+                    <input type="text" id="restaurantPhone" required>
                 </div>
                 <button type="submit">إضافة مطعم</button>
                 <div class="loader" id="restaurantLoader"></div>
@@ -120,51 +170,40 @@
             <div id="restaurantMessage" class="message"></div>
             <div id="restaurantError" class="error"></div>
         </div>
-
-        <h2 onclick="toggleSection('adminSection')">إضافة مشرف</h2>
-        <div id="adminSection" style="display: none;">
-            <form id="adminForm">
-                <div class="form-group">
-                    <label for="adminName">الاسم:</label>
-                    <input type="text" id="adminName" required>
-                </div>
-                <div class="form-group">
-                    <label for="adminPassword">كلمة المرور:</label>
-                    <input type="password" id="adminPassword" required>
-                </div>
-                <div class="form-group">
-                    <label for="adminPhone">رقم التليفون:</label>
-                    <input type="tel" id="adminPhone" required>
-                </div>
-                <button type="submit">إضافة أدمين</button>
-                <div class="loader" id="adminLoader"></div>
-            </form>
-            <div id="adminMessage" class="message"></div>
-            <div id="adminError" class="error"></div>
-        </div>
+        
 
         <h2 onclick="toggleSection('deliveryPersonSection')">إضافة مندوب</h2>
         <div id="deliveryPersonSection" style="display: none;">
             <form id="deliveryPersonForm">
                 <div class="form-group">
-                    <label for="deliveryName">الاسم:</label>
-                    <input type="text" id="deliveryName" required>
+                    <label for="deliveryPersonName">اسم المندوب:</label>
+                    <input type="text" id="deliveryPersonName" required>
                 </div>
                 <div class="form-group">
-                    <label for="deliveryPassword">كلمة المرور:</label>
-                    <input type="password" id="deliveryPassword" required>
-                </div>
-                <div class="form-group">
-                    <label for="deliveryPhone">رقم التليفون:</label>
-                    <input type="tel" id="deliveryPhone" required>
+                    <label for="deliveryPersonPassword">كلمة المرور:</label>
+                    <input type="password" id="deliveryPersonPassword" required>
                 </div>
                 <button type="submit">إضافة مندوب</button>
-                <div class="loader" id="deliveryLoader"></div>
+                <div class="loader" id="deliveryPersonLoader"></div>
             </form>
-            <div id="deliveryMessage" class="message"></div>
-            <div id="deliveryError" class="error"></div>
+            <div id="deliveryPersonMessage" class="message"></div>
+            <div id="deliveryPersonError" class="error"></div>
         </div>
-        <h2><a href="database.html" target="_blank" class="database">قاعده البيانات</a></h2>
+
+        <button onclick="showInstructions()">التعليمات</button>
+        <div id="instructions" class="instructions">
+            <h3>التعليمات:</h3>
+            <p>1. يمكن إضافة حتى 2 مالكين فقط.</p>
+            <p>2. يمكن إضافة حتى 3 مشرفين فقط.</p>
+            <p>3. يمكن إضافة حتى 20 مطعماً فقط.</p>
+            <p>4. يمكن إضافة حتى 100 مندوب توصيل فقط.</p>
+            <p>5. لا يمكن إدخال اسم مكرر في أي قسم.</p>
+            <p>6. IDs:</p>
+            <p>   - مالك: من 1 إلى 2</p>
+            <p>   - مشرف: من 11 إلى 13</p>
+            <p>   - مطعم: من 101 إلى 120</p>
+            <p>   - مندوب: من 1001 إلى 1100</p>
+        </div>
     </div>
 
     <script>
@@ -179,139 +218,198 @@
 
         firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
-        const restaurantsRef = database.ref('restaurant accounts');
-        const adminsRef = database.ref('admins');
-        const deliveryPersonsRef = database.ref('Delivery Person');
+        const ownersRef = database.ref('الملاك');
+        const restaurantsRef = database.ref('المطاعم');
+        const adminsRef = database.ref('المشرفون');
+        const deliveryPersonsRef = database.ref('الطيارين');
 
-        let currentRestaurantId = 101;
+        let currentOwnerId = 1;
         let currentAdminId = 11;
-        let currentDeliveryId = 1001;
+        let currentRestaurantId = 101;
+        let currentDeliveryPersonId = 1001;
 
-        document.getElementById("restaurantForm").addEventListener("submit", function (event) {
-            event.preventDefault();
-            const loader = document.getElementById("restaurantLoader");
-            loader.classList.add("active");
-            const ownerName = document.getElementById("ownerName").value;
+      // إضافة مالك
+document.getElementById("ownerForm").addEventListener("submit", function (event) {
+    event.preventDefault();
+    const loader = document.getElementById("ownerLoader");
+    loader.classList.add("active");
+    const ownerName = document.getElementById("ownerName").value;
+    const ownerPassword = document.getElementById("ownerPassword").value; // إضافة كلمة المرور هنا
 
-            restaurantsRef.orderByChild('name').equalTo(ownerName).once('value').then(snapshot => {
-                if (snapshot.exists()) {
-                    document.getElementById("restaurantError").textContent = "الاسم موجود بالفعل! أدخل مطعم آخر.";
-                    loader.classList.remove("active");
-                } else {
-                    addRestaurant(ownerName);
+    ownersRef.once('value').then(snapshot => {
+        const totalOwners = snapshot.numChildren();
+        if (totalOwners >= 2) {
+            document.getElementById("ownerError").textContent = "لا يمكن إضافة أكثر من 2 مالكين.";
+            loader.classList.remove("active");
+        } else {
+            let nameExists = false;
+            snapshot.forEach(childSnapshot => {
+                if (childSnapshot.val().name === ownerName) {
+                    nameExists = true;
                 }
             });
-        });
+            if (nameExists) {
+                document.getElementById("ownerError").textContent = "هذا الاسم موجود بالفعل.";
+                loader.classList.remove("active");
+            } else {
+                ownersRef.child(currentOwnerId).set({
+                    name: ownerName,
+                    password: ownerPassword,
+                    createdAt: Date.now() // إضافة التاريخ والوقت
+                }).then(() => {
+                    document.getElementById("ownerMessage").textContent = "تم إضافة المالك بنجاح.";
+                    currentOwnerId++;
+                    loader.classList.remove("active");
+                }).catch(error => {
+                    document.getElementById("ownerError").textContent = "حدث خطأ: " + error.message;
+                    loader.classList.remove("active");
+                });
+            }
+        }
+    });
+});
 
-        function addRestaurant(ownerName) {
-            const email = document.getElementById("email").value;
-            const phone = document.getElementById("phone").value;
-            const password = document.getElementById("password").value;
-            const timestamp = new Date().toISOString();
+// إضافة مشرف
+document.getElementById("adminForm").addEventListener("submit", function (event) {
+    event.preventDefault();
+    const loader = document.getElementById("adminLoader");
+    loader.classList.add("active");
+    const adminName = document.getElementById("adminName").value;
+    const adminPassword = document.getElementById("adminPassword").value; // إضافة كلمة المرور هنا
 
-            restaurantsRef.child(currentRestaurantId).set({
-                id: currentRestaurantId,
-                name: ownerName,
-                email: email,
-                phone: phone,
-                password: password,
-                createdAt: timestamp
-            }).then(() => {
-                document.getElementById("restaurantMessage").textContent = "تم إضافة المطعم بنجاح!";
-                document.getElementById("restaurantError").textContent = ""; 
-                document.getElementById("restaurantForm").reset();
-                currentRestaurantId++;
-                document.getElementById("restaurantLoader").classList.remove("active");
-            }).catch((error) => {
-                console.error("خطأ في إضافة المطعم: ", error);
-                document.getElementById("restaurantError").textContent = "حدث خطأ: " + error.message;
-                document.getElementById("restaurantLoader").classList.remove("active");
-            });
+    adminsRef.once('value').then(snapshot => {
+        const totalAdmins = snapshot.numChildren();
+        if (totalAdmins >= 3) {
+            document.getElementById("adminError").textContent = "لا يمكن إضافة أكثر من 3 مشرفين.";
+            loader.classList.remove("active");
+            return;
         }
 
-        document.getElementById("adminForm").addEventListener("submit", function (event) {
-            event.preventDefault();
-            const loader = document.getElementById("adminLoader");
-            loader.classList.add("active");
-            const adminName = document.getElementById("adminName").value;
-
-            adminsRef.orderByChild('name').equalTo(adminName).once('value').then(snapshot => {
-                if (snapshot.exists()) {
-                    document.getElementById("adminError").textContent = "الاسم موجود بالفعل! أدخل أدمين آخر.";
-                    loader.classList.remove("active");
-                } else {
-                    addAdmin(adminName);
-                }
-            });
+        let nameExists = false;
+        snapshot.forEach(childSnapshot => {
+            if (childSnapshot.val().name === adminName) {
+                nameExists = true;
+            }
         });
 
-        function addAdmin(adminName) {
-            const password = document.getElementById("adminPassword").value;
-            const phone = document.getElementById("adminPhone").value;
-            const timestamp = new Date().toISOString();
-
+        if (nameExists) {
+            document.getElementById("adminError").textContent = "هذا الاسم موجود بالفعل.";
+            loader.classList.remove("active");
+        } else {
             adminsRef.child(currentAdminId).set({
-                id: currentAdminId,
                 name: adminName,
-                password: password,
-                phone: phone,
-                createdAt: timestamp
+                password: adminPassword,
+                createdAt: Date.now() // إضافة التاريخ والوقت
             }).then(() => {
-                document.getElementById("adminMessage").textContent = "تم إضافة الأدمين بنجاح!";
-                document.getElementById("adminError").textContent = ""; 
-                document.getElementById("adminForm").reset();
+                document.getElementById("adminMessage").textContent = "تم إضافة المشرف بنجاح.";
                 currentAdminId++;
-                document.getElementById("adminLoader").classList.remove("active");
-            }).catch((error) => {
-                console.error("خطأ في إضافة الأدمين: ", error);
+                loader.classList.remove("active");
+            }).catch(error => {
                 document.getElementById("adminError").textContent = "حدث خطأ: " + error.message;
-                document.getElementById("adminLoader").classList.remove("active");
+                loader.classList.remove("active");
             });
         }
+    });
+});
 
-        document.getElementById("deliveryPersonForm").addEventListener("submit", function (event) {
-            event.preventDefault();
-            const loader = document.getElementById("deliveryLoader");
-            loader.classList.add("active");
-            const deliveryName = document.getElementById("deliveryName").value;
+// إضافة مطعم
+document.getElementById("restaurantForm").addEventListener("submit", function (event) {
+    event.preventDefault();
+    const loader = document.getElementById("restaurantLoader");
+    loader.classList.add("active");
+    const restaurantName = document.getElementById("restaurantName").value;
+    const restaurantPassword = document.getElementById("restaurantPassword").value; // إضافة كلمة المرور هنا
+    const restaurantPhone = document.getElementById("restaurantPhone").value;
 
-            deliveryPersonsRef.orderByChild('name').equalTo(deliveryName).once('value').then(snapshot => {
-                if (snapshot.exists()) {
-                    document.getElementById("deliveryError").textContent = "الاسم موجود بالفعل! أدخل مندوب آخر.";
-                    loader.classList.remove("active");
-                } else {
-                    addDeliveryPerson(deliveryName);
-                }
-            });
+    restaurantsRef.once('value').then(snapshot => {
+        const totalRestaurants = snapshot.numChildren();
+        if (totalRestaurants >= 20) {
+            document.getElementById("restaurantError").textContent = "لا يمكن إضافة أكثر من 20 مطعماً.";
+            loader.classList.remove("active");
+            return;
+        }
+
+        let nameExists = false;
+        snapshot.forEach(childSnapshot => {
+            if (childSnapshot.val().name === restaurantName) {
+                nameExists = true;
+            }
         });
 
-        function addDeliveryPerson(deliveryName) {
-            const password = document.getElementById("deliveryPassword").value;
-            const phone = document.getElementById("deliveryPhone").value;
-            const timestamp = new Date().toISOString();
-
-            deliveryPersonsRef.child(currentDeliveryId).set({
-                id: currentDeliveryId,
-                name: deliveryName,
-                password: password,
-                phone: phone,
-                createdAt: timestamp
+        if (nameExists) {
+            document.getElementById("restaurantError").textContent = "هذا الاسم موجود بالفعل.";
+            loader.classList.remove("active");
+        } else {
+            restaurantsRef.child(currentRestaurantId).set({
+                name: restaurantName,
+                password: restaurantPassword,
+                phone: restaurantPhone,
+                createdAt: Date.now() // إضافة التاريخ والوقت
             }).then(() => {
-                document.getElementById("deliveryMessage").textContent = "تم إضافة المندوب بنجاح!";
-                document.getElementById("deliveryError").textContent = ""; 
-                document.getElementById("deliveryPersonForm").reset();
-                currentDeliveryId++;
-                document.getElementById("deliveryLoader").classList.remove("active");
-            }).catch((error) => {
-                console.error("خطأ في إضافة المندوب: ", error);
-                document.getElementById("deliveryError").textContent = "حدث خطأ: " + error.message;
-                document.getElementById("deliveryLoader").classList.remove("active");
+                document.getElementById("restaurantMessage").textContent = "تم إضافة المطعم بنجاح.";
+                currentRestaurantId++;
+                loader.classList.remove("active");
+            }).catch(error => {
+                document.getElementById("restaurantError").textContent = "حدث خطأ: " + error.message;
+                loader.classList.remove("active");
             });
         }
+    });
+});
 
+// إضافة مندوب
+document.getElementById("deliveryPersonForm").addEventListener("submit", function (event) {
+    event.preventDefault();
+    const loader = document.getElementById("deliveryPersonLoader");
+    loader.classList.add("active");
+    const deliveryPersonName = document.getElementById("deliveryPersonName").value;
+    const deliveryPersonPassword = document.getElementById("deliveryPersonPassword").value; // إضافة كلمة المرور هنا
+
+    deliveryPersonsRef.once('value').then(snapshot => {
+        const totalDeliveryPersons = snapshot.numChildren();
+        if (totalDeliveryPersons >= 100) {
+            document.getElementById("deliveryPersonError").textContent = "لا يمكن إضافة أكثر من 100 مندوب.";
+            loader.classList.remove("active");
+            return;
+        }
+
+        let nameExists = false;
+        snapshot.forEach(childSnapshot => {
+            if (childSnapshot.val().name === deliveryPersonName) {
+                nameExists = true;
+            }
+        });
+
+        if (nameExists) {
+            document.getElementById("deliveryPersonError").textContent = "هذا الاسم موجود بالفعل.";
+            loader.classList.remove("active");
+        } else {
+            deliveryPersonsRef.child(currentDeliveryPersonId).set({
+                name: deliveryPersonName,
+                password: deliveryPersonPassword,
+                createdAt: Date.now() // إضافة التاريخ والوقت
+            }).then(() => {
+                document.getElementById("deliveryPersonMessage").textContent = "تم إضافة المندوب بنجاح.";
+                currentDeliveryPersonId++;
+                loader.classList.remove("active");
+            }).catch(error => {
+                document.getElementById("deliveryPersonError").textContent = "حدث خطأ: " + error.message;
+                loader.classList.remove("active");
+            });
+        }
+    });
+});
+
+        // دالة لتبديل عرض القسم
         function toggleSection(sectionId) {
             const section = document.getElementById(sectionId);
-            section.style.display = section.style.display === "none" ? "block" : "none";
+            section.style.display = section.style.display === 'none' ? 'block' : 'none';
+        }
+
+        // دالة لعرض التعليمات
+        function showInstructions() {
+            const instructions = document.getElementById("instructions");
+            instructions.style.display = instructions.style.display === 'none' ? 'block' : 'none';
         }
     </script>
 </body>
